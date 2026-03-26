@@ -13,7 +13,8 @@
     "postinstall": "npm run install:server",
     "deploy:vercel": "npx vercel --prod",
     "deploy:netlify": "npx netlify deploy --prod --dir=dist",
-    "deploy:pages": "npx wrangler pages deploy dist --project-name=ai-hub"
+    "deploy:pages": "npx wrangler pages deploy dist --project-name=ai-hub",
+    "start": "cd server && node index.js"
   },
   "dependencies": {
     "react": "^19.1.0",
