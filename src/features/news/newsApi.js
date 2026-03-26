@@ -3,8 +3,7 @@ import { SEARCH_QUERIES } from "../../constants";
 export async function fetchAINews(queryIndex) {
   const q = SEARCH_QUERIES[queryIndex % SEARCH_QUERIES.length];
   try {
-    const base = import.meta.env.VITE_API_URL || "";
-    const res = await fetch(`${base}/api/news?queryIndex=${queryIndex}`);
+    const res = await fetch(`/api/news?queryIndex=${queryIndex}`);
     if (!res.ok) throw new Error(`Server returned ${res.status}`);
     const items = await res.json();
     return items.map((item, i) => ({
