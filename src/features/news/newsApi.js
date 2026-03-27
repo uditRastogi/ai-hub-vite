@@ -1,18 +1,16 @@
-import { SEARCH_QUERIES } from "../../constants";
-
-export async function fetchAINews(queryIndex) {
-  const q = SEARCH_QUERIES[queryIndex % SEARCH_QUERIES.length];
+export async function fetchAINews() {
   try {
-    const res = await fetch(`/api/news?queryIndex=${queryIndex}`);
+    const res = await fetch("/api/news");
     if (!res.ok) throw new Error(`Server returned ${res.status}`);
     const items = await res.json();
     return items.map((item, i) => ({
-      id: `${queryIndex}-${i}-${Date.now()}`,
+      id: `${i}-${Date.now()}`,
       title: item.title || "Untitled",
       summary: item.summary || "",
       source: item.source || "",
+      url: item.url || "",
       date: item.date || "",
-      category: q.category,
+      category: item.category || "Industry",
       hot: i === 0,
     }));
   } catch (err) {

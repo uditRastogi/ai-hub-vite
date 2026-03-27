@@ -2,23 +2,7 @@ import { Router } from "express";
 
 const router = Router();
 
-const SEARCH_QUERIES = [
-  { query: "latest AI model releases 2026", category: "Models" },
-  { query: "AI research breakthroughs 2026", category: "Research" },
-  { query: "AI regulation policy news 2026", category: "Policy" },
-  { query: "AI industry enterprise adoption 2026", category: "Industry" },
-  { query: "large language model benchmark results 2026", category: "Models" },
-  { query: "AI safety alignment news 2026", category: "Research" },
-  { query: "AI startups funding 2026", category: "Industry" },
-  { query: "generative AI applications 2026", category: "Industry" },
-  { query: "open source AI models news 2026", category: "Models" },
-  { query: "AI ethics governance 2026", category: "Policy" },
-];
-
-router.get("/", async (req, res) => {
-  const queryIndex = parseInt(req.query.queryIndex, 10) || 0;
-  const q = SEARCH_QUERIES[queryIndex % SEARCH_QUERIES.length];
-
+router.get("/", async (_req, res) => {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return res.status(500).json({ error: "GEMINI_API_KEY is not configured on the server" });
@@ -34,7 +18,7 @@ router.get("/", async (req, res) => {
           contents: [{
             role: "user",
             parts: [{
-              text: `Search the web for: "${q.query}". Then return ONLY a JSON array of 5 news items you found. No markdown fences, no explanation, no preamble — just the raw JSON array. Each object: {"title":"headline","summary":"one sentence","source":"domain.com","date":"Mon YYYY"}`
+              text: `Search the web for the latest AI news across these categories: AI model releases, AI research breakthroughs, AI regulation & policy, and AI industry & startups. Return ONLY a JSON array of 10 news items. No markdown fences, no explanation, no preamble — just the raw JSON array. Each object must have: {"title":"headline","summary":"one or two sentences","source":"domain.com","url":"https://full-link-to-article","date":"Mar 2026","category":"Models|Research|Policy|Industry"}`
             }]
           }],
           tools: [{ google_search: {} }],
@@ -52,7 +36,6 @@ router.get("/", async (req, res) => {
       return res.status(response.status).json({ error: "Gemini API error", details: data });
     }
 
-    // Extract text from the first candidate's first text part (avoid duplicates)
     const parts = data.candidates?.[0]?.content?.parts || [];
     const firstText = parts.find(p => p.text)?.text || "";
 
